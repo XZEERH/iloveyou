@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>love heart 2 — made in razeerh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ff2d95;
+            --pink-glow: rgba(255, 45, 149, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Container utama untuk hati */
+        .heart-container {
+            position: relative;
+            width: min(80vmin, 600px);
+            height: min(80vmin, 600px);
+        }
+
+        /* Gaya tulisan I Love You */
+        .ily {
+            position: absolute;
+            color: var(--pink);
+            font-size: clamp(10px, 2vmin, 16px);
+            white-space: nowrap;
+            text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-glow);
+            opacity: 0;
+            animation: appearance 3s infinite; /* Efek berkedip seperti di video */
+            user-select: none;
+        }
+
+        /* Animasi muncul-hilang (kedip) */
+        @keyframes appearance {
+            0%, 100% { opacity: 0; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1); }
+        }
+
+        .credit {
+            position: fixed;
+            bottom: 20px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-container" id="heart">
+        </div>
+
+    <div class="credit">Made in razeerh</div>
+
+    <script>
+        const heartContainer = document.getElementById('heart');
+        const totalWords = 60; // Jumlah tulisan "I love you" yang membentuk hati
+
+        // Rumus matematika untuk bentuk hati
+        function getHeartPoint(t) {
+            // t adalah sudut dalam radian
+            const x = 16 * Math.pow(Math.sin(t), 3);
+            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+            return { x, y };
+        }
+
+        function createHeart() {
+            const width = heartContainer.clientWidth;
+            const height = heartContainer.clientHeight;
+            const centerX = width / 2;
+            const centerY = height / 2;
+            const scale = width / 40; // Menyesuaikan ukuran hati dengan container
+
+            for (let i = 0; i < totalWords; i++) {
+                const t = (i / totalWords) * 2 * Math.PI;
+                const point = getHeartPoint(t);
+                
+                const span = document.createElement('span');
+                span.className = 'ily';
+                span.textContent = 'I love you';
+                
+                // Atur posisi berdasarkan rumus
+                const posX = centerX + point.x * scale;
+                const posY = centerY + point.y * scale;
+                
+                span.style.left = `${posX}px`;
+                span.style.top = `${posY}px`;
+                
+                // Tambahkan delay acak agar kedipnya tidak barengan (seperti di video)
+                span.style.animationDelay = `${Math.random() * 3}s`;
+                
+                // Putar tulisan sedikit agar mengikuti alur (opsional, bisa dihapus)
+                span.style.transform = `translate(-50%, -50%)`;
+
+                heartContainer.appendChild(span);
+            }
+        }
+
+        createHeart();
+
+        // Refresh posisi jika layar di-resize
+        window.addEventListener('resize', () => {
+            heartContainer.innerHTML = '';
+            createHeart();
+        });
+    </script>
+</body>
+</html>
