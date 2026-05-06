@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>love heart — made in razeerh</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink: #ff2d95;
+            --pink-glow: rgba(255, 45, 149, 0.9);
+            --speed: 20s; /* Kecepatan aliran tulisan */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #000;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .heart-container {
+            position: relative;
+            width: min(85vmin, 600px);
+            height: min(85vmin, 600px);
+            transform: translateZ(0); /* Optimasi GPU */
+        }
+
+        /* Gaya teks I Love You */
+        .ily {
+            position: absolute;
+            color: var(--pink);
+            font-size: clamp(10px, 2.2vmin, 16px);
+            white-space: nowrap;
+            text-shadow: 0 0 8px var(--pink), 0 0 15px var(--pink-glow);
+            user-select: none;
+            pointer-events: none;
+            
+            /* Animasi jalan mengikuti alur */
+            animation: travel var(--speed) linear infinite;
+            will-change: offset-distance;
+        }
+
+        @keyframes travel {
+            from { offset-distance: 0%; }
+            to   { offset-distance: 100%; }
+        }
+
+        /* Footer */
+        .credit {
+            position: fixed;
+            bottom: 30px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 400;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="heart-container" id="heart-path"></div>
+
+    <div class="credit">Made in razeerh</div>
+
+    <script>
+        (function() {
+            const container = document.getElementById('heart-path');
+            // Jumlah kata dikurangi agar ada JARAK (gap) yang jelas
+            const wordCount = 30; 
+            
+            function getPath() {
+                const w = container.clientWidth;
+                const h = container.clientHeight;
+                const scale = w / 42; 
+                const cx = w / 2;
+                const cy = h / 2.2;
+
+                let pathData = "";
+                // Membuat titik koordinat bentuk hati
+                for (let i = 0; i <= 80; i++) {
+                    const t = (i / 80) * 2 * Math.PI;
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                    
+                    const px = cx + x * scale;
+                    const py = cy + y * scale;
+                    
+                    pathData += (i === 0 ? "M" : "L") + px.toFixed(1) + "," + py.toFixed(1);
+                }
+                return pathData + "Z";
+            }
+
+            function init() {
+                container.innerHTML = '';
+                const d = getPath();
+
+                // Inject path ke CSS offset
+                let style = document.getElementById('dynamic-path');
+                if (!style) {
+                    style = document.createElement('style');
+                    style.id = 'dynamic-path';
+                    document.head.appendChild(style);
+                }
+                // offset-rotate: 0deg supaya tulisan tetap tegak lurus (seperti di video)
+                // Kalau mau tulisannya miring mengikuti belokan, ganti jadi 'auto'
+                style.textContent = `.ily { offset-path: path("${d}"); offset-rotate: 0deg; }`;
+
+                const fragment = document.createDocumentFragment();
+                for (let i = 0; i < wordCount; i++) {
+                    const span = document.createElement('span');
+                    span.className = 'ily';
+                    span.textContent = 'I love you';
+                    
+                    // Delay dibuat berurutan agar mengalir
+                    const delay = -(i / wordCount) * 20; 
+                    span.style.animationDelay = `${delay}s`;
+                    
+                    fragment.appendChild(span);
+                }
+                container.appendChild(fragment);
+            }
+
+            init();
+            
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(init, 250);
+            });
+        })();
+    </script>
+</body>
+</html>
