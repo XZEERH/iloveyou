@@ -44,7 +44,7 @@ Project ini bersifat *Open Source*. Jika Anda ingin mengembangkan versi baru (mi
 
 ## 💳 Credit
 Dibuat dengan ❤️ oleh **Razeerh**.
-*Special thanks to the astronomy & coding community.*
+*Special thanks to the all & coding community.*
 
 ---
 *Follow me for more cool projects!*
