@@ -38,7 +38,7 @@ Teks "I love you" diam di posisi membentuk hati, namun muncul dan hilang secara 
 ---
 
 ## 📝 Kontribusi
-Project ini bersifat *Open Source*. Jika Anda ingin mengembangkan versi baru (misal: ganti warna, ganti teks, atau tambah musik), silakan gunakan kode ini sebagai pondasi dasar.
+Project ini bersifat *Open Source* atau hanya *referensi* saja. Jika Anda ingin mengembangkan versi baru (misal: dari warna, bentuk teks, atau (menambah musik), silakan cukup jadikan referensi saja sebagai pondasi dasar kode versi kamu sendiri.
 
 ---
 
