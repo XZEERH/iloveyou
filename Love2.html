@@ -11,7 +11,11 @@
             --pink-glow: rgba(255, 45, 149, 0.8);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
 
         body {
             background: #000;
@@ -23,14 +27,12 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        /* Container utama untuk hati */
         .heart-container {
             position: relative;
             width: min(80vmin, 600px);
             height: min(80vmin, 600px);
         }
 
-        /* Gaya tulisan I Love You */
         .ily {
             position: absolute;
             color: var(--pink);
@@ -38,14 +40,14 @@
             white-space: nowrap;
             text-shadow: 0 0 10px var(--pink), 0 0 20px var(--pink-glow);
             opacity: 0;
-            animation: appearance 3s infinite; /* Efek berkedip seperti di video */
+            animation: pulse 3s infinite;
             user-select: none;
+            transform: translate(-50%, -50%);
         }
 
-        /* Animasi muncul-hilang (kedip) */
-        @keyframes appearance {
-            0%, 100% { opacity: 0; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1); }
+        @keyframes pulse {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         }
 
         .credit {
@@ -60,62 +62,49 @@
 </head>
 <body>
 
-    <div class="heart-container" id="heart">
-        </div>
-
+    <div class="heart-container" id="heart"></div>
     <div class="credit">Made in razeerh</div>
 
     <script>
-        const heartContainer = document.getElementById('heart');
-        const totalWords = 60; // Jumlah tulisan "I love you" yang membentuk hati
+        (function() {
+            const container = document.getElementById('heart');
+            const density = 60;
 
-        // Rumus matematika untuk bentuk hati
-        function getHeartPoint(t) {
-            // t adalah sudut dalam radian
-            const x = 16 * Math.pow(Math.sin(t), 3);
-            const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-            return { x, y };
-        }
-
-        function createHeart() {
-            const width = heartContainer.clientWidth;
-            const height = heartContainer.clientHeight;
-            const centerX = width / 2;
-            const centerY = height / 2;
-            const scale = width / 40; // Menyesuaikan ukuran hati dengan container
-
-            for (let i = 0; i < totalWords; i++) {
-                const t = (i / totalWords) * 2 * Math.PI;
-                const point = getHeartPoint(t);
-                
-                const span = document.createElement('span');
-                span.className = 'ily';
-                span.textContent = 'I love you';
-                
-                // Atur posisi berdasarkan rumus
-                const posX = centerX + point.x * scale;
-                const posY = centerY + point.y * scale;
-                
-                span.style.left = `${posX}px`;
-                span.style.top = `${posY}px`;
-                
-                // Tambahkan delay acak agar kedipnya tidak barengan (seperti di video)
-                span.style.animationDelay = `${Math.random() * 3}s`;
-                
-                // Putar tulisan sedikit agar mengikuti alur (opsional, bisa dihapus)
-                span.style.transform = `translate(-50%, -50%)`;
-
-                heartContainer.appendChild(span);
+            function getPoint(t) {
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                return { x, y };
             }
-        }
 
-        createHeart();
+            function render() {
+                container.innerHTML = '';
+                const { clientWidth: w, clientHeight: h } = container;
+                const scale = w / 40;
 
-        // Refresh posisi jika layar di-resize
-        window.addEventListener('resize', () => {
-            heartContainer.innerHTML = '';
-            createHeart();
-        });
+                for (let i = 0; i < density; i++) {
+                    const t = (i / density) * 2 * Math.PI;
+                    const pos = getPoint(t);
+                    
+                    const el = document.createElement('span');
+                    el.className = 'ily';
+                    el.textContent = 'I love you';
+                    
+                    el.style.left = `${(w / 2) + pos.x * scale}px`;
+                    el.style.top = `${(h * 0.45) + pos.y * scale}px`;
+                    el.style.animationDelay = `${Math.random() * 3}s`;
+
+                    container.appendChild(el);
+                }
+            }
+
+            render();
+
+            let timer;
+            window.addEventListener('resize', () => {
+                clearTimeout(timer);
+                timer = setTimeout(render, 200);
+            });
+        })();
     </script>
 </body>
 </html>
